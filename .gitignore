@@ -1,0 +1,19 @@
+# Arduino
+*.hex
+*.elf
+build/
+
+# ROS2
+install/
+log/
+build/
+*.pyc
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
