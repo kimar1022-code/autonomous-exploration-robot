@@ -1,0 +1,35 @@
+### robot_localization EKF 설정 ###
+# 바퀴 오도메트리(/odom) + IMU 자이로(/imu/data_raw)를 융합해
+# 더 정확한 odom→base_link TF를 발행한다(특히 회전).
+# 출처: automaticaddison ROS2 Jazzy 차동구동 예제 기반, 이 로봇(base_link)에 맞게 수정.
+ekf_filter_node:
+  ros__parameters:
+    frequency: 30.0
+    two_d_mode: true              # 평면 주행 로봇 (z·roll·pitch 무시)
+    publish_tf: true              # odom→base_link TF를 EKF가 발행 (base_controller 대신)
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    # 바퀴 오도메트리: 전진속도(vx)·회전속도(vyaw)만 신뢰 (위치는 적분이라 drift)
+    odom0: /odom
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  false, false,
+                   false, false, true,
+                   false, false, false]
+    odom0_differential: false
+    odom0_relative: false
+
+    # IMU: 자이로의 회전속도(vyaw)만 사용 — 회전 정확도의 핵심.
+    #      자작 로봇의 가속도(ax,ay)는 노이즈가 커서 일부러 제외.
+    imu0: /imu/data_raw
+    imu0_config: [false, false, false,
+                  false, false, false,
+                  false, false, false,
+                  false, false, true,
+                  false, false, false]
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: true
