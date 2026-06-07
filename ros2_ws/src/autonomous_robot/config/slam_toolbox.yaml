@@ -7,7 +7,7 @@ slam_toolbox:
     ceres_preconditioner: SCHUR_JACOBI
     ceres_trust_strategy: LEVENBERG_MARQUARDT
     ceres_dogleg_type: TRADITIONAL_DOGLEG
-    ceres_loss_function: None
+    ceres_loss_function: HuberLoss        # 바퀴 슬립·이상치 강건 (자작 차동구동 권장)
 
     # ROS Parameters
     odom_frame: odom
@@ -41,8 +41,8 @@ slam_toolbox:
     # General Parameters
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.5
-    minimum_travel_heading: 0.5
+    minimum_travel_distance: 0.2
+    minimum_travel_heading: 0.1        # 회전 드리프트 감소
     check_min_dist_and_heading_precisely: false
     scan_buffer_size: 10
     scan_buffer_maximum_scan_distance: 10.0

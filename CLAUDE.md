@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 자작 4WD 차동구동 로봇을 ROS2 Jazzy에 통합하는 프로젝트. **분산 구조**로 동작한다:
 
-- **Raspberry Pi 4** (로봇, hostname `aeriPC`, user `aeri`, IP 192.168.0.147): 센서 수집·모터 제어. ROS2 `ros-base`. 노드: `base_controller`, `rplidar_node`, `camera_node`.
+- **Raspberry Pi 4** (로봇, hostname `aeriPC`, user `aeri`, IP `192.168.75.100` — DHCP라 공유기에 따라 바뀔 수 있음): 센서 수집·모터 제어. ROS2 `ros-base`. 노드: `base_controller`, `rplidar_node`, `camera_node`. 워크스페이스는 `~/ros2_ws`(데스크탑과 별도, git 아님).
 - **데스크탑** (연산 기기, user `aeri`, GTX 1660 SUPER GPU): 무거운 연산. ROS2 `desktop`(rviz2 포함) + slam_toolbox + Nav2 + YOLO(CUDA). **이 작업 디렉터리(`/home/aeri`)가 데스크탑이다.**
 
 Pi가 `/odom /scan /imu /tf`를 발행하면 데스크탑이 받아 SLAM/Nav을 돌리고, 데스크탑이 `/cmd_vel`을 Pi로 보낸다. 둘은 DDS로 통신한다.
