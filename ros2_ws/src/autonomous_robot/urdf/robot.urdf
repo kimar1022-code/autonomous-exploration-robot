@@ -68,19 +68,20 @@
     <origin xyz="0.081 -0.106 -0.05"/>
   </joint>
 
-  <!-- ===== LiDAR Link (RPLIDAR A1M8-R6, 3층) ===== -->
-  <link name="lidar_link"/>
-  <joint name="lidar_joint" type="fixed">
+  <!-- ===== LiDAR (RPLIDAR A1M8-R6, 3층) =====
+       rplidar 노드가 /scan 을 frame_id="laser" 로 발행하므로 프레임 이름을 laser 로 통일.
+       TF 체인: base_link → laser (robot_state_publisher 가 이 fixed joint 로 발행)
+       ⚠️ origin 은 실측 필요 — 라이다 회전중심의 base_link 기준 오프셋(m): X=전방+, Y=좌측+, Z=상방+.
+          Z=0.10 은 3층 높이 임시값. 맵이 90/180도 틀어지면 rpy 의 yaw(마지막 값)로 보정. -->
+  <link name="laser"/>
+  <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="lidar_link"/>
-    <origin xyz="0 0 0.10"/>
+    <child link="laser"/>
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
   </joint>
 
-  <!-- ===== Odometry Frame ===== -->
-  <link name="odom"/>
-  <joint name="odom_base_joint" type="floating">
-    <parent link="odom"/>
-    <child link="base_link"/>
-  </joint>
+  <!-- odom 프레임은 URDF에 두지 않는다.
+       odom → base_link 변환은 base_controller.py 가 엔코더 적분값으로 동적 TF 발행하고,
+       map → odom 은 slam_toolbox 가 발행한다. -->
 
 </robot>
