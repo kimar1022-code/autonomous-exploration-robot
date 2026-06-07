@@ -15,6 +15,7 @@ WHEEL_BASE   = 0.162         # 좌우 바퀴 간격 (m) = 162mm
 COUNTS_PER_REV_L = 1971.5    # 왼쪽 바퀴 1회전당 엔코더 카운트 (실측: 15772/8)
 COUNTS_PER_REV_R = 2196.3    # 오른쪽 바퀴 1회전당 엔코더 카운트 (실측: 13178/6)
 MAX_WHEEL_SPEED = 0.5        # 바퀴 최대 선속도 (m/s) - PWM 255에 대응 (추정)
+MIN_PWM = 100                # 모터가 실제로 도는 최소 PWM (이하는 안 돎 → 데드밴드로 보상)
 
 SERIAL_PORT = '/dev/ttyAMA0'
 BAUD = 115200
@@ -22,6 +23,11 @@ BAUD = 115200
 class BaseController(Node):
     def __init__(self):
         super().__init__('base_controller')
+
+        # EKF(robot_localization)를 쓰면 odom→base_link TF는 EKF가 발행한다.
+        # publish_tf=False(기본)면 여기선 TF를 안 보내 충돌을 피한다. (mock/단독구동 시 True)
+        self.declare_parameter('publish_tf', False)
+        self.publish_tf = self.get_parameter('publish_tf').value
 
         # 시리얼 연결
         try:
@@ -55,6 +61,14 @@ class BaseController(Node):
 
         self.get_logger().info('Base Controller (real UART) started')
 
+    def _deadband(self, pwm):
+        # 0이 아닌데 |pwm| < MIN_PWM 이면 최소 구동값으로 끌어올린다 (안 그러면 모터가 안 돎).
+        if pwm == 0:
+            return 0
+        if abs(pwm) < MIN_PWM:
+            return MIN_PWM if pwm > 0 else -MIN_PWM
+        return pwm
+
     # ===== cmd_vel → M,<left>,<right> 전송 =====
     def cmd_vel_callback(self, msg: Twist):
         v = msg.linear.x       # 전진 속도 (m/s)
@@ -67,6 +81,10 @@ class BaseController(Node):
         # 선속도(m/s) → PWM(-255~255)
         left_pwm  = int(max(-255, min(255, v_left  / MAX_WHEEL_SPEED * 255)))
         right_pwm = int(max(-255, min(255, v_right / MAX_WHEEL_SPEED * 255)))
+
+        # 데드밴드 보상: 느린 명령(Nav2 등)도 최소 구동 PWM 으로 끌어올림
+        left_pwm = self._deadband(left_pwm)
+        right_pwm = self._deadband(right_pwm)
 
         cmd = f'M,{left_pwm},{right_pwm}\n'
         try:
@@ -149,17 +167,22 @@ class BaseController(Node):
         odom.pose.pose.orientation.w = q_w
         odom.twist.twist.linear.x = vx
         odom.twist.twist.angular.z = vth
+        # EKF 신뢰도: 전진(vx)은 비교적 신뢰, 회전(vyaw)은 엔코더 슬립으로 부정확 → 크게(덜 신뢰)
+        odom.twist.covariance[0] = 0.04     # vx 분산
+        odom.twist.covariance[35] = 0.25    # vyaw 분산
         self.odom_pub.publish(odom)
 
-        t = TransformStamped()
-        t.header.stamp = now.to_msg()
-        t.header.frame_id = 'odom'
-        t.child_frame_id = 'base_link'
-        t.transform.translation.x = self.x
-        t.transform.translation.y = self.y
-        t.transform.rotation.z = q_z
-        t.transform.rotation.w = q_w
-        self.tf_broadcaster.sendTransform(t)
+        # odom→base_link TF: EKF 사용 시(publish_tf=False)엔 EKF가 발행하므로 생략
+        if self.publish_tf:
+            t = TransformStamped()
+            t.header.stamp = now.to_msg()
+            t.header.frame_id = 'odom'
+            t.child_frame_id = 'base_link'
+            t.transform.translation.x = self.x
+            t.transform.translation.y = self.y
+            t.transform.rotation.z = q_z
+            t.transform.rotation.w = q_w
+            self.tf_broadcaster.sendTransform(t)
 
     # ===== IMU =====
     def handle_imu(self, vals):
@@ -175,6 +198,8 @@ class BaseController(Node):
         imu.angular_velocity.x = gx * math.pi / 180.0
         imu.angular_velocity.y = gy * math.pi / 180.0
         imu.angular_velocity.z = gz * math.pi / 180.0
+        # EKF 신뢰도: 자이로 z(회전)는 정확 → 작게(신뢰). EKF는 imu0 에서 vyaw 만 사용.
+        imu.angular_velocity_covariance[8] = 0.02
         self.imu_pub.publish(imu)
 
     # ===== 지자계 =====

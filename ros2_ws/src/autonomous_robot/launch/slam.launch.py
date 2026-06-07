@@ -34,4 +34,15 @@ def generate_launch_description():
         }.items(),
     )
 
-    return LaunchDescription([lidar_bridge, slam])
+    # IMU 융합: 바퀴 odom(/odom) + IMU 자이로(/imu/data_raw) → 정확한 odom→base_link TF.
+    # base_controller 는 publish_tf=False 로 TF 를 양보해야 충돌하지 않는다.
+    ekf = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[os.path.join(pkg_share, 'config', 'ekf.yaml'),
+                    {'use_sim_time': False}],
+    )
+
+    return LaunchDescription([lidar_bridge, ekf, slam])
