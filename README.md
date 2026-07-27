@@ -1,4 +1,4 @@
-# ROS2 Autonomous Exploration Robot
+# Autonomous Exploration Robot
 
 시판 키트가 아니라 직접 만든 4WD 차동구동 로봇을 ROS2에 통합하는 프로젝트입니다.
 TurtleBot3로 배운 SLAM/Nav2를 자작 하드웨어 위에서 동작시키는 것이 목표입니다.
