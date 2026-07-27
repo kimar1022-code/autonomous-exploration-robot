@@ -29,7 +29,6 @@ setup(
     },
     entry_points={
 'console_scripts': [
-            'base_controller_mock=autonomous_robot.base_controller_mock:main',
             'base_controller=autonomous_robot.base_controller:main',
             'camera_node=autonomous_robot.camera_node:main',
             'teleop_node=autonomous_robot.teleop_node:main',
