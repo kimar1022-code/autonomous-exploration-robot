@@ -6,6 +6,8 @@ TurtleBot3로 배운 SLAM/Nav2를 자작 하드웨어 위에서 동작시키는 
 TurtleBot3가 "완성된 로봇을 사용"하는 것이라면, 이 프로젝트는 로봇을 ROS에 연결되게
 만드는 과정 자체 — 모터·엔코더·IMU 펌웨어, 시리얼 통신, URDF, odometry — 를 직접 구축합니다.
 
+![자작 4WD 로봇](docs/images/robot_left.jpg)
+
 | 항목 | 사양 |
 | --- | --- |
 | 제어 보드 | Arduino Nano 33 BLE Sense (3.3V, IMU 내장) |
@@ -33,6 +35,17 @@ ROS2 통합
 - 키보드 텔레옵 노드 (누적 속도형, 수동 주행)
 - RPLIDAR `/scan` 발행
 - SLAM 맵핑, Nav2 자율주행은 진행 중
+
+## 하드웨어
+
+2층 아크릴 섀시. 아래층에 모터·L298N·배터리를, 위층에 라즈베리파이와 아두이노를 올렸다.
+LiDAR 는 스캔이 가려지지 않도록 맨 위 중앙에 세웠다.
+
+| 왼쪽 | 오른쪽 |
+| --- | --- |
+| ![왼쪽](docs/images/robot_left.jpg) | ![오른쪽](docs/images/robot_right.jpg) |
+| 앞 | 위 |
+| ![앞](docs/images/robot_front.jpg) | ![위](docs/images/robot_top.jpg) |
 
 ## 구조
 
@@ -82,7 +95,7 @@ autonomous-robot/
 
 ## 실행
 
-배선
+### 배선
 
 | 연결 | 핀 |
 | --- | --- |
