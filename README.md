@@ -6,9 +6,9 @@ TurtleBot3로 배운 SLAM/Nav2를 자작 하드웨어 위에서 동작시키는 
 TurtleBot3가 "완성된 로봇을 사용"하는 것이라면, 이 프로젝트는 로봇을 ROS에 연결되게
 만드는 과정 자체 - 모터 · 엔코더 · IMU 펌웨어, 시리얼 통신, URDF, odometry - 를 직접 구축합니다.
 
-![자작 4WD 로봇](docs/images/robot_left.jpg)
+<img src="docs/images/robot_left.jpg" alt="자작 4WD 로봇" width="100%" />
 
-| 항목 | 사양 |
+| 항목 <img src="docs/images/layout/w100.png" width="100%" height="1"> | 사양 <img src="docs/images/layout/w400.png" width="100%" height="1"> |
 | --- | --- |
 | 제어 보드 | Arduino Nano 33 BLE Sense (3.3V, IMU 내장) |
 | 메인 컴퓨터 | Raspberry Pi 4 (4GB) |
@@ -41,11 +41,11 @@ ROS2 통합
 2층 아크릴 섀시. 아래층에 모터 · L298N · 배터리를, 위층에 라즈베리파이와 아두이노를 올렸다.
 LiDAR 는 스캔이 가려지지 않도록 맨 위 중앙에 세웠다.
 
-| 왼쪽 | 오른쪽 |
+| 왼쪽 <img src="docs/images/layout/w100.png" width="100%" height="1"> | 오른쪽 <img src="docs/images/layout/w100.png" width="100%" height="1"> |
 | --- | --- |
-| ![왼쪽](docs/images/robot_left.jpg) | ![오른쪽](docs/images/robot_right.jpg) |
+| <img src="docs/images/robot_left.jpg" alt="왼쪽" width="100%" /> | <img src="docs/images/robot_right.jpg" alt="오른쪽" width="100%" /> |
 | 앞 | 위 |
-| ![앞](docs/images/robot_front.jpg) | ![위](docs/images/robot_top.jpg) |
+| <img src="docs/images/robot_front.jpg" alt="앞" width="100%" /> | <img src="docs/images/robot_top.jpg" alt="위" width="100%" /> |
 
 ## 구조
 
@@ -97,7 +97,7 @@ autonomous-robot/
 
 ### 배선
 
-| 연결 | 핀 |
+| 연결 <img src="docs/images/layout/w200.png" width="100%" height="1"> | 핀 <img src="docs/images/layout/w300.png" width="100%" height="1"> |
 | --- | --- |
 | L298N IN1~IN4 (모터 방향) | Arduino D2~D5 |
 | 엔코더 좌/우 A · B | Arduino D6~D9 |
@@ -152,7 +152,7 @@ UART 통신 실패도 같은 방식으로 잡았습니다. 오실로스코프로
 
 ## 트러블슈팅
 
-| 이슈 | 원인 | 해결 |
+| 이슈 <img src="docs/images/layout/w300.png" width="100%" height="1"> | 원인 <img src="docs/images/layout/w400.png" width="100%" height="1"> | 해결 <img src="docs/images/layout/w300.png" width="100%" height="1"> |
 | --- | --- | --- |
 | 모터 안 돎 (시리얼 정상) | ENA/ENB 인에이블 OFF 또는 GND 공통 누락 | 점퍼캡 확인 / 아두이노-L298N GND 연결 |
 | BNO055 I2C 인식 실패 | 클론 모듈 불량 (SDA 라인 0V 고착) | 내장 IMU(LSM9DS1) 보드로 전환 |
