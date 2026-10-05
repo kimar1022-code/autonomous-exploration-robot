@@ -64,8 +64,7 @@ flowchart TD
     IMU[내장 IMU LSM9DS1]
     Lidar[(RPLIDAR A1M8)]
 
-    BC -->|cmd_vel→M| Ardu
-    Ardu -->|E,I,Mag| BC
+    BC <-->|"cmd_vel→M / E,I,Mag"| Ardu
     Ardu --> L298N --> Motor
     Enc -.->|A/B| Ardu
     IMU -.-> Ardu
