@@ -49,29 +49,7 @@ LiDAR 는 스캔이 가려지지 않도록 맨 위 중앙에 세웠다.
 
 ## 구조
 
-```mermaid
-flowchart TD
-    subgraph Pi["Raspberry Pi 4 (ROS2 Jazzy)"]
-        BC[base_controller 노드<br/>예정]
-        SLAM[SLAM / Nav2<br/>예정]
-        LIDAR_DRV[RPLIDAR 드라이버]
-    end
-
-    Ardu[Arduino Nano 33 BLE Sense<br/>base_controller.ino]
-    L298N[L298N 모터드라이버]
-    Motor[(4WD 모터)]
-    Enc[엔코더 x2]
-    IMU[내장 IMU LSM9DS1]
-    Lidar[(RPLIDAR A1M8)]
-
-    BC <-->|"cmd_vel→M / E,I,Mag"| Ardu
-    Ardu --> L298N --> Motor
-    Enc -.->|A/B| Ardu
-    IMU -.-> Ardu
-    Lidar -->|USB| LIDAR_DRV
-    LIDAR_DRV --> SLAM
-    BC --> SLAM
-```
+<img src="docs/images/architecture.png" alt="로봇 구성도" width="100%" />
 
 설계에서 지킨 것:
 
